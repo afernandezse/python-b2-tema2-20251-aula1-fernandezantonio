@@ -39,24 +39,53 @@ import matplotlib.pyplot as plt
 
 
 def plot_area_graph(df, column_name, ax=None):
-    # Write here your code
-    pass
+    df_sorted = df.sort_values(by=column_name)
+    species = df_sorted['target'].unique()
+    area_data = {specie: df_sorted[df_sorted['target'] == specie][column_name].values for specie in species}
+    area_df = pd.DataFrame(area_data)
+    if ax is None:
+        fig, ax = plt.subplots()
+    else:
+        fig = ax.figure
+    area_df.plot.area(ax=ax, color=['green', 'red', 'blue'])
+    ax.set_title(f'Area Graph of {column_name}')
+    ax.set_xlabel('Index')
+    ax.set_ylabel(column_name)
+    return fig, ax
 
 
 def plot_scatter_graph(df, column_name_x, column_name_y, ax=None):
-    # Write here your code
-    pass
+    if ax is None:
+        fig, ax = plt.subplots()
+    else:
+        fig = ax.figure
+    color_map = {0: 'green', 1: 'red', 2: 'blue'}
+    species = sorted(df['target'].unique())
+    for specie in species:
+        subset = df[df['target'] == specie]
+        ax.scatter(
+            subset[column_name_x],
+            subset[column_name_y],
+            label=str(specie),
+            color=color_map[specie]
+        )
+    ax.set_title(f'Scatter Plot of {column_name_x} vs {column_name_y}')
+    ax.set_xlabel(column_name_x)
+    ax.set_ylabel(column_name_y)
+    ax.legend()
+    return fig, ax
+
 
 
 # Para probar el código, descomenta las siguientes líneas
-# if __name__ == "__main__":
-#     current_dir = Path(__file__).parent
-#     path_csv = current_dir / "data/iris_dataset.csv"
-#     dataframe = pd.read_csv(path_csv)
-#     fig, axs = plt.subplots(1, 2, figsize=(12, 6))
+if __name__ == "__main__":
+    current_dir = Path(__file__).parent
+    path_csv = current_dir / "data/iris_dataset.csv"
+    dataframe = pd.read_csv(path_csv)
+    fig, axs = plt.subplots(1, 2, figsize=(12, 6))
 
-#     plot_area_graph(dataframe, "petal length (cm)", ax=axs[0])
-#     plot_scatter_graph(dataframe, "sepal length (cm)", "sepal width (cm)", ax=axs[1])
+    plot_area_graph(dataframe, "petal length (cm)", ax=axs[0])
+    plot_scatter_graph(dataframe, "sepal length (cm)", "sepal width (cm)", ax=axs[1])
 
-#     plt.tight_layout()
-#     plt.show()
+    plt.tight_layout()
+    plt.show()

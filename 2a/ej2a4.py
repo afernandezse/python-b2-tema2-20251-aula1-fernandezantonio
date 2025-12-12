@@ -6,25 +6,6 @@ mostrar la distribución de las ventas de un tercer año.
 
 Detalles de la Implementación:
 
-    Gráfico de Barras y Líneas:
-        Crea un gráfico de barras para comparar las ventas mensuales de los dos primeros años.
-        Superpone un gráfico de líneas en el mismo eje para mostrar las ventas acumuladas de estos dos años.
-        Utiliza ejes gemelos para manejar las escalas de los gráficos de barras y líneas adecuadamente.
-
-    Gráfico de Pastel en Subfigura:
-        Presenta las ventas del tercer año en un gráfico de pastel en una subfigura separada, mostrando la distribución
-        porcentual de las ventas por mes.
-
-Parámetros de la Función:
-    sales_year1 (List[int]): Lista de ventas mensuales para el primer año.
-    sales_year2 (List[int]): Lista de ventas mensuales para el segundo año.
-    sales_year3 (List[int]): Lista de ventas mensuales para el tercer año.
-    months (List[str]): Lista de nombres de los meses.
-
-Especificaciones de los Gráficos:
-    Gráfico de Barras y Líneas:
-        Título: "Comparación de Ventas Mensuales: 2020 vs 2021"
-        Ejes:
             Eje X: Nombres de los meses.
             Eje Y izquierdo: Ventas mensuales.
             Eje Y derecho: Ventas acumuladas.
@@ -53,19 +34,67 @@ import typing as t
 
 
 def compare_monthly_sales(
-    sales_year1: list, sales_year2: list, sales_year3: list, months: list
+    sales_year1: list,
+    sales_year2: list,
+    sales_year3: list,
+    months: list
 ) -> t.Tuple[plt.Figure, plt.Axes, plt.Axes]:
-    # Write here your code
-    pass
+    
+
+    y1 = np.asarray(sales_year1)
+    y2 = np.asarray(sales_year2)
+    y3 = np.asarray(sales_year3)
+
+    if len(months) != 12:
+        raise ValueError("months must have exactly 12 entries.")
+
+    csum1 = np.cumsum(y1)
+    csum2 = np.cumsum(y2)
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5), constrained_layout=True)
+
+    x = np.arange(12)
+    width = 0.42
+    b1 = ax1.bar(x - width/2, y1, width=width, label="2020")
+    b2 = ax1.bar(x + width/2, y2, width=width, label="2021")
+
+    ax1.set_xticks(x)
+    ax1.set_xticklabels(months)
+    ax1.set_ylabel("Monthly Sales")
+
+    ax1_t = ax1.twinx()
+    l1, = ax1_t.plot(x, csum1, marker="o", linestyle="-", label="2020 Cumulative")
+    l2, = ax1_t.plot(x, csum2, marker="o", linestyle="-", label="2021 Cumulative")
+    ax1_t.set_ylabel("Cumulative Sales")
+
+    ax1.set_title("Monthly Sales Comparison: 2020 vs 2021")
+
+    handles = [b1, b2, l1, l2]
+    labels = ["2020", "2021", "2020 Cumulative", "2021 Cumulative"]
+    ax1.legend(handles, labels, loc="upper left")
+
+    total3 = float(y3.sum())
+    if total3 == 0:
+        ax2.text(0.5, 0.5, "No Sales in 2022", ha="center", va="center", fontsize=11)
+        ax2.axis("off")
+    else:
+        ax2.pie(y3, labels=months, autopct=lambda p: f"{p:.1f}%", startangle=90)
+        ax2.axis("equal")
+
+    # TÍTULO EXACTO que pide el test
+    ax2.set_title("2022 Monthly Sales Distribution")
+
+    return fig, ax1, ax2
+
 
 
 # Para probar el código, descomenta las siguientes líneas
-# sales_2020 = np.random.randint(100, 500, 12)
-# sales_2021 = np.random.randint(100, 500, 12)
-# sales_2022 = np.random.randint(100, 500, 12)
-# months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+sales_2020 = np.random.randint(100, 500, 12)
+sales_2021 = np.random.randint(100, 500, 12)
+sales_2022 = np.random.randint(100, 500, 12)
+months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
 
-# if __name__ == "__main__":
-#     fig, ax1, ax2 = compare_monthly_sales(sales_2020, sales_2021, sales_2022, months)
-#     plt.show()
+if __name__ == "__main__":
+    fig, ax1, ax2 = compare_monthly_sales(sales_2020, sales_2021, sales_2022, months)
+    plt.show()

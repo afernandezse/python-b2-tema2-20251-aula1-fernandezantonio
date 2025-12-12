@@ -37,26 +37,29 @@ from sklearn.metrics import r2_score, mean_squared_error
 
 
 def prepare_data_for_regression(data: pd.DataFrame) -> Tuple:
-    # Write here your code
-    pass
+    X_train, X_test, y_train, y_test = train_test_split(data.loc[:, data.columns != 'MEDV'],data['MEDV'], test_size=0.2, random_state=42)
+    return X_train, X_test, y_train, y_test
 
 
 def perform_linear_regression(X_train, y_train) -> LinearRegression:
-    # Write here your code
-    pass
+    model =LinearRegression()
+    model.fit(X_train, y_train)
+    return model
 
 
 def evaluate_regression_model(model, X_test, y_test) -> Tuple[float, float]:
-    # Write here your code
-    pass
+    y_pred = model.predict(X_test)
+    r_squared = r2_score(y_test, y_pred)
+    rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+    return r_squared, rmse
 
 
 # Para probar el código, descomenta las siguientes líneas
-# if __name__ == '__main__':
-#     current_dir = Path(__file__).parent
-#     file_path = current_dir / 'data/housing.csv'
-#     data = pd.read_csv(file_path, skiprows=14)
-#     X_train, X_test, y_train, y_test = prepare_data_for_regression(data)
-#     model = perform_linear_regression(X_train, y_train)
-#     r_squared, rmse = evaluate_regression_model(model, X_test, y_test)
-#     print(f'R^2 del modelo: {r_squared}, RMSE: {rmse}')
+if __name__ == '__main__':
+    current_dir = Path(__file__).parent
+    file_path = current_dir / 'data/housing.csv'
+    data = pd.read_csv(file_path, skiprows=14)
+    X_train, X_test, y_train, y_test = prepare_data_for_regression(data)
+    model = perform_linear_regression(X_train, y_train)
+    r_squared, rmse = evaluate_regression_model(model, X_test, y_test)
+    print(f'R^2 del modelo: {r_squared}, RMSE: {rmse}')

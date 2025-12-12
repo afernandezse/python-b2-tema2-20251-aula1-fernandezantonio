@@ -47,31 +47,41 @@ from sklearn.datasets import load_iris
 def data_processing(
     data, feature_names, target=None, target_names=None, target_feature_name="species"
 ):
-    # Write here your code
-    pass
+    df = pd.DataFrame(data, columns=feature_names)
+    if target is not None:
+        if target_names is not None:
+            target_mapped = [target_names[i] for i in target]
+            df[target_feature_name] = target_mapped
+        else:
+            df[target_feature_name] = target
+    return df
 
 
 def pairplot_graphic( df: pd.DataFrame, columns: Optional[List[str]] = None, 
                      **viz_params: Dict[str, str]) -> sns.PairGrid:
-    # Write here your code
-    pass
+    if columns is not None:
+        df_to_plot = df[columns + [viz_params.get("hue", "species")]]
+    else:
+        df_to_plot = df
+    pairplot = sns.pairplot(df_to_plot, **viz_params)
+    return pairplot
 
 
 # Para probar el código, descomenta las siguientes líneas
-# if __name__ == "__main__":
-#     iris = load_iris()
-#     df_iris = data_processing(
-#         iris.data, iris.feature_names, iris.target, iris.target_names
-#     )
+if __name__ == "__main__":
+    iris = load_iris()
+    df_iris = data_processing(
+        iris.data, iris.feature_names, iris.target, iris.target_names
+    )
 
-#     viz_params = {
-#         "hue": "species",
-#         "diag_kind": "kde",
-#         "kind": "scatter",
-#         "palette": "husl",
-#         "corner": True,
-#     }
-#     columns_to_visualize = None
-#     plot = pairplot_graphic(df_iris, columns=columns_to_visualize, **viz_params)
-#     plt.show()
+    viz_params = {
+        "hue": "species",
+        "diag_kind": "kde",
+        "kind": "scatter",
+        "palette": "husl",
+        "corner": True,
+    }
+    columns_to_visualize = None
+    plot = pairplot_graphic(df_iris, columns=columns_to_visualize, **viz_params)
+    plt.show()
 

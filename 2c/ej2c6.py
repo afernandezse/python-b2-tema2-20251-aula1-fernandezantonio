@@ -35,24 +35,53 @@ from sklearn.preprocessing import StandardScaler
 
 
 def prepare_data_for_pca(file_path: str) -> pd.DataFrame:
-    # Write here your code
-    pass
+    df = pd.read_csv(file_path, skiprows=14)
+    df_numeric = df.select_dtypes(include=['number'])
+    df_numeric = df_numeric.drop(columns=['MEDV'])
+    df_numeric = df_numeric.dropna()
+    scaler = StandardScaler()
+    scaled_data = scaler.fit_transform(df_numeric)
+    return pd.DataFrame(scaled_data, columns=df_numeric.columns)
 
 
 def perform_pca(data: pd.DataFrame, n_components: int) -> PCA:
-    # Write here your code
-    pass
+    pca = PCA(n_components=n_components)
+    pca.fit(data)
+    return pca
 
 
 def plot_pca_results(pca: PCA) -> tuple:
-    # Write here your code
-    pass
+    explained_variance = pca.explained_variance_ratio_
+    cumulative_variance = explained_variance.cumsum()
+
+    plt.figure(figsize=(10, 5))
+
+    plt.subplot(1, 2, 1)
+    plt.bar(range(1, len(explained_variance) + 1), explained_variance, alpha=0.7, align='center',
+            label='Individual explained variance')
+    plt.step(range(1, len(cumulative_variance) + 1), cumulative_variance, where='mid',
+             label='Cumulative explained variance', color='red')
+    plt.xlabel('Principal Component')
+    plt.ylabel('Variance Explained')
+    plt.title('PCA Explained Variance')
+    plt.legend()
+
+    plt.subplot(1, 2, 2)
+    plt.plot(cumulative_variance, marker='o')
+    plt.xlabel('Number of Principal Components')
+    plt.ylabel('Cumulative Variance Explained')
+    plt.title('Cumulative Variance Explained by PCA')
+
+    plt.tight_layout()
+    plt.show()
+
+    return explained_variance, cumulative_variance
 
 
 # Para probar el código, descomenta las siguientes líneas
-# if __name__ == "__main__":
-#     current_dir = Path(__file__).parent
-#     FILE_PATH = current_dir / "data/housing.csv"
-#     dataset = prepare_data_for_pca(FILE_PATH)
-#     pca = perform_pca(dataset, 4)
-#     _, _ = plot_pca_results(pca)
+if __name__ == "__main__":
+    current_dir = Path(__file__).parent
+    FILE_PATH = current_dir / "data/housing.csv"
+    dataset = prepare_data_for_pca(FILE_PATH)
+    pca = perform_pca(dataset, 4)
+    _, _ = plot_pca_results(pca)

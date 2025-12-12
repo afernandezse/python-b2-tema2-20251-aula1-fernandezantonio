@@ -34,26 +34,28 @@ from pathlib import Path
 
 
 def read_sqlite_table(file_path: str, table_name: str) -> pd.DataFrame:
-    # Write here your code
-    pass
+    with sqlite3.connect(file_path) as conn:
+        result = pd.read_sql_query(f"SELECT * FROM {table_name}", conn)
+    return result
 
 
 def execute_sqlite_query(file_path: str, query: str) -> pd.DataFrame:
-    # Write here your code
-    pass
+    with sqlite3.connect(file_path) as conn:
+        result = pd.read_sql_query(query, conn)
+    return result
 
 
 # Para probar el código, descomenta las siguientes líneas
-# db_path = "data/ej2b3/ramen-ratings.db"
-# current_dir = Path(__file__).parent
-# sqlite_db_path = current_dir / db_path
+db_path = "data/ej2b3/ramen-ratings.db"
+current_dir = Path(__file__).parent
+sqlite_db_path = current_dir / db_path
 
 
-# df_from_table = read_sqlite_table(sqlite_db_path, "ramen_ratings")
-# df_from_query = execute_sqlite_query(
-#     sqlite_db_path, "SELECT * FROM ramen_ratings WHERE Stars >= 4"
-# )
+df_from_table = read_sqlite_table(sqlite_db_path, "ramen_ratings")
+df_from_query = execute_sqlite_query(
+    sqlite_db_path, "SELECT * FROM ramen_ratings WHERE Stars >= 4"
+)
 
-# # Mostrar la cantidad de registros
-# print(f"Registros en la tabla: {len(df_from_table)}")
-# print(f"Registros en la consulta: {len(df_from_query)}")
+# Mostrar la cantidad de registros
+print(f"Registros en la tabla: {len(df_from_table)}")
+print(f"Registros en la consulta: {len(df_from_query)}")

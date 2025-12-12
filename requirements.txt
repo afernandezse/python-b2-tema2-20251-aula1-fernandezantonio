@@ -13,4 +13,3 @@ scikit-learn~=1.0
 seaborn~=0.0
 exceptiongroup
 tzdata
-

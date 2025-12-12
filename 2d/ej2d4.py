@@ -40,42 +40,52 @@ from sklearn.metrics import accuracy_score, classification_report
 
 
 def prepare_data(file_path: str) -> Tuple:
-    # Write here your code
-    pass
+    df = pd.read_csv(file_path)
+    X = df.drop(columns=['target'])
+    y = df['target']
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    return X_train, X_test, y_train, y_test
 
 
 def perform_svm_classification(X_test, y_test, clf) -> Tuple[float, str]:
-    # Write here your code
-    pass
+    y_pred = clf.predict(X_test)
+    accuracy = accuracy_score(y_test, y_pred)
+    report = classification_report(y_test, y_pred)
+    return accuracy, report
 
 
 def train_svm_classifier(X_train, y_train) -> SVC:
-    # Write here your code
-    pass
+    clf = SVC(kernel='linear', random_state=42)
+    clf.fit(X_train, y_train)
+    return clf
 
 
 def predict_species(clf: SVC, features: List[float], feature_names: List[str]) -> str:
-    # Write here your code
-    pass
+    input_data = pd.DataFrame([features], columns=feature_names)
+    prediction = clf.predict(input_data)
+    class_idx = clf.classes_.tolist().index(prediction[0])
+    species_names = ['Iris Setosa', 'Iris Versicolor', 'Iris Virginica']
+    species = species_names[class_idx]
+    return species
 
 
 target_names = {0: "Iris Setosa", 1: "Iris Versicolor", 2: "Iris Virginica"}
 
 # Para probar el código, descomenta este código
-# if __name__ == "__main__":
-#     current_dir = Path(__file__).parent
-#     file_path = current_dir / 'data/iris_dataset.csv'
-#     X_train, X_test, y_train, y_test = prepare_data(file_path)
-#     clf = train_svm_classifier(X_train, y_train)
+if __name__ == "__main__":
+    current_dir = Path(__file__).parent
+    file_path = current_dir / 'data/iris_dataset.csv'
+    X_train, X_test, y_train, y_test = prepare_data(file_path)
+    clf = train_svm_classifier(X_train, y_train)
 
-#     # Precisión y reporte del modelo
-#     accuracy, report = perform_svm_classification(X_test, y_test, clf)
-#     print(f'Precisión del modelo: {accuracy}')
-#     print('Reporte de clasificación:')
-#     print(report)
+    # Precisión y reporte del modelo
+    accuracy, report = perform_svm_classification(X_test, y_test, clf)
+    print(f'Precisión del modelo: {accuracy}')
+    print('Reporte de clasificación:')
+    print(report)
 
-#     # Realizar una predicción con un nuevo conjunto de características
-#     feature_names = ['sepal length (cm)', 'sepal width (cm)', 'petal length (cm)', 'petal width (cm)']
-#     features = [5.1, 3.5, 1.4, 0.2]  # Ejemplo de características
-#     species = predict_species(clf, features, feature_names)
-#     print(f'La especie predicha es: {species}')
+    # Realizar una predicción con un nuevo conjunto de características
+    feature_names = ['sepal length (cm)', 'sepal width (cm)', 'petal length (cm)', 'petal width (cm)']
+    features = [5.1, 3.5, 1.4, 0.2]  # Ejemplo de características
+    species = predict_species(clf, features, feature_names)
+    print(f'La especie predicha es: {species}')

@@ -39,26 +39,47 @@ import matplotlib.pyplot as plt
 
 
 def prepare_data_for_clustering(file_path: str) -> pd.DataFrame:
-    # Write here your code
-    pass
+    df = pd.read_csv(file_path)
+    num_df = df.select_dtypes(include=[np.number]).dropna()
+    mean = num_df.mean(axis=0)
+    std = num_df.std(axis=0, ddof=1)
+    data_scaled = (num_df - mean) / std
+    df_scaled = pd.DataFrame(data_scaled, columns=num_df.columns)
+    return df_scaled
 
 
 def perform_kmeans_clustering(data: np.ndarray, n_clusters: int) -> np.ndarray:
-    # Write here your code
-    pass
+    model = KMeans(n_clusters=n_clusters, random_state=42)
+    labels = model.fit_predict(data)
+    return labels
 
 
 def visualize_clusters(
     data: np.ndarray, labels: np.ndarray, is_testing_execution: bool = False
 ) -> Tuple[np.ndarray, plt.Figure, plt.Axes]:
-    # Write here your code
-    pass
+    scaler = StandardScaler()
+    data_scaled = scaler.fit_transform(data)
+    pca = PCA(n_components=2)
+    data_reduced = pca.fit_transform(data_scaled)
+
+    fig, ax = plt.subplots(figsize=(8, 6))
+    scatter = ax.scatter(data_reduced[:, 0], data_reduced[:, 1], c=labels, cmap='viridis', alpha=0.6)
+    legend1 = ax.legend(*scatter.legend_elements(), title="Clusters")
+    ax.add_artist(legend1)
+    ax.set_title('KMeans Clustering Visualization')
+    ax.set_xlabel('PCA Component 1')
+    ax.set_ylabel('PCA Component 2')
+
+    if not is_testing_execution:
+        plt.show()
+
+    return data_reduced, fig, ax
 
 
 # Para probar el código, desconmenta las siguientes líneas
-# if __name__ == '__main__':
-#     current_dir = Path(__file__).parent
-#     file_path = current_dir / 'data/german_credit_data.csv'
-#     data = prepare_data_for_clustering(file_path)
-#     labels = perform_kmeans_clustering(data, 5)
-#     data_reduced, fig, ax = visualize_clusters(data, labels, False)
+if __name__ == '__main__':
+    current_dir = Path(__file__).parent
+    file_path = current_dir / 'data/german_credit_data.csv'
+    data = prepare_data_for_clustering(file_path)
+    labels = perform_kmeans_clustering(data, 5)
+    data_reduced, fig, ax = visualize_clusters(data, labels, False)

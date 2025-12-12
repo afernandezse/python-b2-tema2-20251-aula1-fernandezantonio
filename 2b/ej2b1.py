@@ -42,39 +42,38 @@ from pathlib import Path
 
 
 def read_csv_basic(file_path: str) -> pd.DataFrame:
-    # Write here your code
-    pass
+    return pd.read_csv(file_path)
 
 def read_csv_header_issue(file_path: str, header_row: int) -> pd.DataFrame:
-    # Write here your code
-    pass
+    return pd.read_csv(file_path, header=header_row)
+
 
 def read_csv_multi_index(file_path: str, index_cols: t.List[str]) -> pd.DataFrame:
-    # Write here your code
-    pass
+    return pd.read_csv(file_path, index_col=index_cols)
 
 def read_csv_custom_separator(
     file_path: str, separator: str, decimal: str
 ) -> pd.DataFrame:
-    # Write here your code
-    pass
+    df = pd.read_csv(file_path, sep=separator, decimal=decimal)
+    df['Stars'] = pd.to_numeric(df['Stars'], errors='coerce')
+    return df
 
 
 # Para probar el código, descomenta las siguientes líneas
-# current_dir = Path(__file__).parent
-# BASIC_CSV_PATH = current_dir / "data/ej2b1/ramen-ratings.csv"
-# HEADER_ISSUE_CSV_PATH = current_dir / "data/ej2b1/ramen_ratings_with_header_issue.csv"
-# MULTI_INDEX_CSV_PATH = current_dir / "data/ej2b1/ramen_ratings_multi_index.csv"
-# SEMICOLON_CSV_PATH = current_dir / "data/ej2b1/ramen_ratings_decimal_comma.csv"
+current_dir = Path(__file__).parent
+BASIC_CSV_PATH = current_dir / "data/ej2b1/ramen-ratings.csv"
+HEADER_ISSUE_CSV_PATH = current_dir / "data/ej2b1/ramen_ratings_with_header_issue.csv"
+MULTI_INDEX_CSV_PATH = current_dir / "data/ej2b1/ramen_ratings_multi_index.csv"
+SEMICOLON_CSV_PATH = current_dir / "data/ej2b1/ramen_ratings_decimal_comma.csv"
 
-# df_basic = read_csv_basic(BASIC_CSV_PATH)
-# df_header_issue = read_csv_header_issue(HEADER_ISSUE_CSV_PATH, header_row=3)
-# df_multi_index = read_csv_multi_index(
-#     MULTI_INDEX_CSV_PATH, index_cols=["Brand", "Style"]
-# )
-# df_semicolon = read_csv_custom_separator(SEMICOLON_CSV_PATH, separator=";", decimal=",")
+df_basic = read_csv_basic(BASIC_CSV_PATH)
+df_header_issue = read_csv_header_issue(HEADER_ISSUE_CSV_PATH, header_row=3)
+df_multi_index = read_csv_multi_index(
+    MULTI_INDEX_CSV_PATH, index_cols=["Brand", "Style"]
+)
+df_semicolon = read_csv_custom_separator(SEMICOLON_CSV_PATH, separator=";", decimal=",")
 
-# # Mostrar los primeros registros de cada DataFrame
-# print(
-#     df_basic.head(), df_header_issue.head(), df_multi_index.head(), df_semicolon.head()
-# )
+# Mostrar los primeros registros de cada DataFrame
+print(
+    df_basic.head(), df_header_issue.head(), df_multi_index.head(), df_semicolon.head()
+)

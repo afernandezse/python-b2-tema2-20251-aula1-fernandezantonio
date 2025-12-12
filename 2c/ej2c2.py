@@ -42,28 +42,36 @@ import numpy as np
 
 
 def read_csv_basic(file_path: str) -> pd.DataFrame:
-    # Write here your code
-    pass
+    return pd.read_csv(file_path)
 
 
 def custom_dataframe_describe(df: pd.DataFrame) -> pd.DataFrame:
-    # Write here your code
-    pass
+    metrics = {
+        'count': df.count(numeric_only=True),
+        'mean': df.mean(numeric_only=True),
+        'median': df.median(numeric_only=True),
+        'std': df.std(numeric_only=True),
+        'min': df.min(numeric_only=True),
+        '25%': df.quantile(0.25, numeric_only=True),
+        '50%': df.quantile(0.50, numeric_only=True),
+        '75%': df.quantile(0.75,numeric_only=True),
+        'max': df.max(numeric_only=True)
+    }
+    return pd.DataFrame(metrics).T
 
 
 def pandas_dataframe_describe(df: pd.DataFrame) -> pd.DataFrame:
-    # Write here your code
-    pass
+    return df.describe()
 
 
 # Para probar el código, descomenta las siguientes líneas
-# if __name__ == "__main__":
-#     current_dir = Path(__file__).parent
-#     FILE_PATH = current_dir / "data/grades.csv"
-#     dataframe = read_csv_basic(FILE_PATH)
+if __name__ == "__main__":
+    current_dir = Path(__file__).parent
+    FILE_PATH = current_dir / "data/grades.csv"
+    dataframe = read_csv_basic(FILE_PATH)
 
-#     print("Custom Describe of the DataFrame:")
-#     print(custom_dataframe_describe(dataframe), end="\n\n")
+    print("Custom Describe of the DataFrame:")
+    print(custom_dataframe_describe(dataframe), end="\n\n")
 
-#     print("Pandas Describe of the DataFrame:")
-#     print(pandas_dataframe_describe(dataframe))
+    print("Pandas Describe of the DataFrame:")
+    print(pandas_dataframe_describe(dataframe))

@@ -39,18 +39,20 @@ from scipy import stats
 def calculate_pearson_correlation(
     file_path: str, var1: str, var2: str
 ) -> (float, float):
-    # Write here your code
-    pass
+    df = pd.read_csv(file_path, skiprows=14)
+    df_clean = df[[var1, var2]].dropna()
+    correlation, p_value = stats.pearsonr(df_clean[var1], df_clean[var2])
+    return correlation, p_value
 
 
 # Para probar el código, descomenta las siguientes líneas
-# if __name__ == "__main__":
-#     current_dir = Path(__file__).parent
-#     HOUSING_CSV_PATH = current_dir / 'data/housing.csv'
-#     variable_1 = 'MEDV'
-#     variable_2 = 'RM'
-#     correlation, p_value = calculate_pearson_correlation(HOUSING_CSV_PATH, variable_1, variable_2)
+if __name__ == "__main__":
+    current_dir = Path(__file__).parent
+    HOUSING_CSV_PATH = current_dir / 'data/housing.csv'
+    variable_1 = 'MEDV'
+    variable_2 = 'RM'
+    correlation, p_value = calculate_pearson_correlation(HOUSING_CSV_PATH, variable_1, variable_2)
 
-#     # Mostrar el coeficiente de correlación de Pearson y el valor p
-#     print(f'Columnas comparadas: {variable_1} y {variable_2}')
-#     print(f'Correlación de Pearson: {correlation}, Valor p: {p_value}')
+    # Mostrar el coeficiente de correlación de Pearson y el valor p
+    print(f'Columnas comparadas: {variable_1} y {variable_2}')
+    print(f'Correlación de Pearson: {correlation}, Valor p: {p_value}')

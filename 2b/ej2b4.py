@@ -30,27 +30,31 @@ from pathlib import Path
 
 
 def read_excel_sheet(file_path: str) -> pd.DataFrame:
-    # Write here your code
-    pass 
+    return pd.read_excel(file_path, sheet_name='Sheet1')
 
 
 
 def read_excel_custom_sheet(file_path: str) -> pd.DataFrame:
     def is_not_empty_column(col):
-        # Write here your code
-        pass
+        return not col.isnull().all()
+    df = pd.read_excel(file_path, sheet_name="Sheet2", header=3, skipfooter=4)
+    use_cols = [
+        col for col in df.columns if is_not_empty_column(df[col])
+    ]
+    df = df[use_cols]
+    return df
 
 
 # Para probar el código, descomenta las siguientes líneas
-# file_path = "data/ej2b4/ramen-ratings.xlsx"
-# current_dir = Path(__file__).parent
-# excel_file_path = current_dir / file_path
+file_path = "data/ej2b4/ramen-ratings.xlsx"
+current_dir = Path(__file__).parent
+excel_file_path = current_dir / file_path
 
-# df_from_sheet1 = read_excel_sheet(excel_file_path)
-# df_from_sheet2 = read_excel_custom_sheet(excel_file_path)
+df_from_sheet1 = read_excel_sheet(excel_file_path)
+df_from_sheet2 = read_excel_custom_sheet(excel_file_path)
 
-# # Mostrar la cantidad de registros y los nombres de las columnas
-# print(f"Registros en la hoja 1: {len(df_from_sheet1)}")
-# print(f"Nombres de columnas en la hoja 1: {df_from_sheet1.columns.tolist()}")
-# print(f"Registros en la hoja 2: {len(df_from_sheet2)}")
-# print(f"Nombres de columnas en la hoja 2: {df_from_sheet2.columns.tolist()}")
+# Mostrar la cantidad de registros y los nombres de las columnas
+print(f"Registros en la hoja 1: {len(df_from_sheet1)}")
+print(f"Nombres de columnas en la hoja 1: {df_from_sheet1.columns.tolist()}")
+print(f"Registros en la hoja 2: {len(df_from_sheet2)}")
+print(f"Nombres de columnas en la hoja 2: {df_from_sheet2.columns.tolist()}")
