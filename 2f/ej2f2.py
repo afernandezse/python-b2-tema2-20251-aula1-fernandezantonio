@@ -65,36 +65,58 @@ from sklearn.base import BaseEstimator
 def train_model(
     X: np.ndarray, y: np.ndarray, test_size: float = 0.3, random_state: int = 42
 ) -> Tuple[BaseEstimator, np.ndarray, np.ndarray]:
-    # Write here your code
-    pass
+    model = RandomForestClassifier(random_state=random_state)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
+    model.fit(X_train, y_train)
+    return model, X_test, y_test
 
 
 def save_model(model: BaseEstimator, filename: str) -> bool:
-    # Write here your code
-    pass
+    try:
+        with open(filename, 'wb') as f:
+            pickle.dump(model, f)
+        return True
+    except Exception as e:
+        print(f"Error saving model: {e}")
+        return False
 
 
 def load_model_and_predict(filename: str, X_test: np.ndarray) -> np.ndarray:
-    # Write here your code
-    pass
+    try:
+        with open(filename, 'rb') as f:
+            model = pickle.load(f)
+        predictions = model.predict(X_test)
+        return predictions
+    except Exception as e:
+        print(f"Error loading model or predicting: {e}")
+        return np.array([])
 
 
 def plot_feature_importance(
     model: BaseEstimator, feature_names: List[str], figsize: Tuple[int, int] = (12, 8)
 ) -> plt.Figure:
-    # Write here your code
-    pass
+    importances = model.feature_importances_
+    indices = np.argsort(importances)[::-1]
+
+    fig, ax = plt.subplots(figsize=figsize)
+    ax.bar(range(len(importances)), importances[indices], align='center')
+    ax.set_xticks(range(len(importances)))
+    ax.set_xticklabels([feature_names[i] for i in indices], rotation=90)
+    ax.set_title('Feature Importances')
+    ax.set_ylabel('Importance Score')
+    plt.tight_layout()
+    return fig
 
 
 # Para probar el código, descomenta las siguientes líneas
-# if __name__ == "__main__":
-#     wine = load_wine()
-#     X = wine.data
-#     y = wine.target
+if __name__ == "__main__":
+    wine = load_wine()
+    X = wine.data
+    y = wine.target
 
-#     model, X_test, y_test = train_model(X, y)
-#     filename = "wine_model.pickle"
-#     is_saved = save_model(model, filename)
-#     print("Model saved:", is_saved)
-#     fig = plot_feature_importance(model, wine.feature_names)
-#     plt.show()
+    model, X_test, y_test = train_model(X, y)
+    filename = "wine_model.pickle"
+    is_saved = save_model(model, filename)
+    print("Model saved:", is_saved)
+    fig = plot_feature_importance(model, wine.feature_names)
+    plt.show()
